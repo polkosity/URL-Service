@@ -20,28 +20,32 @@ class UrlServiceTest {
 
     @Test
     fun `get valid id returns valid entity`() {
-        every { repo.findById(any()) } returns Optional.of(UrlEntry(id = "a1B2c3", url = "www.originenergy.com.au/electricity-gas/plans.html"))
-        service.get("a1B2c3")
-        verify { repo.findById("a1B2c3") }
-        val saved = service.get("a1B2c3")
+        val id = "a1B2c3"
+        val url = "www.originenergy.com.au/electricity-gas/plans.html"
+        every { repo.findById(any()) } returns Optional.of(UrlEntry(id = id, url = url))
+        val saved = service.get(id)
+        verify { repo.findById(id) }
         assertNotNull(saved)
-        assertEquals(saved.id, "a1B2c3")
-        assertEquals(saved.url, "www.originenergy.com.au/electricity-gas/plans.html")
+        assertEquals(saved.id, id)
+        assertEquals(saved.url, url)
     }
 
     @Test
     fun `get non-existent id throws not found`() {
+        val id = "a1B2c3"
         every { repo.findById(any()) } returns Optional.empty()
-        assertThrows(EntityNotFoundException::class.java) { service.get("a1B2c3") }
+        assertThrows(EntityNotFoundException::class.java) { service.get(id) }
+        verify { repo.findById(id) }
     }
 
     @Test
     fun `create persists valid entity`() {
+        val url = "https://example.com"
         every { repo.existsById(any()) } returns false
         every { repo.save(any<UrlEntry>()) } answers { firstArg() }
-        val saved = service.create("https://example.com")
+        val saved = service.create(url)
         verify { repo.save(any<UrlEntry>()) }
-        assertEquals("https://example.com", saved.url)
+        assertEquals(url, saved.url)
         assertNotNull(saved.id)
         val base64 = Regex("^[A-Za-z0-9_-]*$")
         assert(base64.matches(saved.id))
@@ -50,16 +54,19 @@ class UrlServiceTest {
     @Test
     fun `create retries on collision`() {
         // Simulate first ID colliding, second unique
-        every { repo.existsById("dupId") } returns true
-        every { repo.existsById("uniqId") } returns false
+        val dupId = "dupId"
+        val uniqId = "uniqId"
+        val url = "https://retry.example"
+        every { repo.existsById(dupId) } returns true
+        every { repo.existsById(uniqId) } returns false
         every { repo.save(any<UrlEntry>()) } answers { firstArg() }
 
         mockkObject(IdGenerator)
-        every { IdGenerator.generateId() } returnsMany listOf("dupId", "uniqId")
+        every { IdGenerator.generateId() } returnsMany listOf(dupId, uniqId)
 
-        val saved = service.create("https://retry.example")
-        assertEquals("https://retry.example", saved.url)
-        assertEquals("uniqId", saved.id)
+        val saved = service.create(url)
+        assertEquals(url, saved.url)
+        assertEquals(uniqId, saved.id)
     }
 
     @Test

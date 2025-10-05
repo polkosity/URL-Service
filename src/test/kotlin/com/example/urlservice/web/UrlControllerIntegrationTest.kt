@@ -24,7 +24,8 @@ class UrlControllerIntegrationTest(
 ) {
     @Test
     fun `create returns 201 and ID`() {
-        val body = mapOf("url" to "https://example.com/path?q=1")
+        val url = "https://example.com/path?q=1"
+        val body = mapOf("url" to url)
         mockMvc.perform(
             post("/short.ly")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -32,7 +33,7 @@ class UrlControllerIntegrationTest(
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").exists())
-            .andExpect(jsonPath("$.url").value("https://example.com/path?q=1"))
+            .andExpect(jsonPath("$.url").value(url))
     }
 
     @Test
@@ -48,19 +49,21 @@ class UrlControllerIntegrationTest(
 
     @Test
     fun `lookup existing returns 200 and info`() {
-        val saved = repo.save(UrlEntry(id = "a1B2c3", url = "https://www.originenergy.com.au/electricity-gas/plans.html"))
+        val url = "https://www.originenergy.com.au/electricity-gas/plans.html"
+        val saved = repo.save(UrlEntry(id = "a1B2c3", url = url))
         mockMvc.perform(get("/short.ly/${saved.id}/info"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(saved.id))
-            .andExpect(jsonPath("$.url").value("https://www.originenergy.com.au/electricity-gas/plans.html"))
+            .andExpect(jsonPath("$.url").value(url))
     }
 
     @Test
     fun `fetch existing entry returns 301`() {
-        val saved = repo.save(UrlEntry(id = "a1B2c3", url = "https://www.originenergy.com.au/electricity-gas/plans.html"))
+        val url = "https://www.originenergy.com.au/electricity-gas/plans.html"
+        val saved = repo.save(UrlEntry(id = "a1B2c3", url = url))
         mockMvc.perform(get("/short.ly/${saved.id}"))
             .andExpect(status().isMovedPermanently)
-            .andExpect(header().string("Location", "https://www.originenergy.com.au/electricity-gas/plans.html"))
+            .andExpect(header().string("Location", url))
 
     }
 
