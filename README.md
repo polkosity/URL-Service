@@ -1,10 +1,15 @@
 # URL Shortener Service
 
+[![Build](https://github.com/polkosity/URL-Service/actions/workflows/ci.yml/badge.svg)](https://github.com/polkosity/URL-Service/actions/workflows/ci.yml)
+![Java](https://img.shields.io/badge/Java-21-red)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen)
+
 ## Run
+Ensure no process is bound to port 8080
 ```bash
 ./gradlew bootRun
 ```
-(ensure no process is bound to port 8080)
 - App: http://localhost:8080
 - JaCoCo report: `build/reports/jacoco/test/html/index.html` (after build or test)
 - Health check: http://localhost:8080/actuator/health
@@ -44,10 +49,16 @@ example response:
 
 `{"id":"a1B2c3","url":"https://www.originenergy.com.au/electricity-gas/plans.html"}`
 
-## Potential extensions
+## GitHub
+### Repository
+https://github.com/polkosity/URL-Service
+
+## Potential extensions & next steps
 - Flyway or Liquibase for DB migration management
 - Use a production-like DB, and Dockerise it in integration tests to retain simplicity of testing
 - CI/CD pipeline for deployment to cloud
 - API Gateway, DNS, Web server, Load balancer, WAF considerations
 - Monitor health check endpoint and alerting with SRE tool
 - DB backups and DR strategy
+- Load testing
+- Security review

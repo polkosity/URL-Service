@@ -18,9 +18,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 class UrlControllerIntegrationTest(
-    @Autowired private val mockMvc: MockMvc,
-    @Autowired private val objectMapper: ObjectMapper,
-    @Autowired private val repo: UrlRepository
+    @param:Autowired private val mockMvc: MockMvc,
+    @param:Autowired private val objectMapper: ObjectMapper,
+    @param:Autowired private val repo: UrlRepository
 ) {
     @Test
     fun `create returns 201 and ID`() {
